@@ -14,7 +14,7 @@ namespace Application.Articles.Queries.GetById
 
         public async Task<Article> Handle(GetArticleByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _articleRepository.GetByIdAsync(request.Id, cancellationToken) ?? new Article();
+            return await _articleRepository.GetByIdAsync(request.Id, cancellationToken) ?? throw new ArgumentException("No article with given id");
         }
     }
 }

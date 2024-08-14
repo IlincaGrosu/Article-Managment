@@ -1,4 +1,5 @@
 ﻿using Application.Articles.Commands.Create;
+using Application.Articles.Commands.Delete;
 using Application.Articles.Commands.Update;
 using Application.Articles.Queries.GetAll;
 using Application.Articles.Queries.GetById;
@@ -22,7 +23,7 @@ namespace Business.Articles.Controllers
             _mapper = mapper;
         }
 
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken cancellationToken)
         {
@@ -30,6 +31,7 @@ namespace Business.Articles.Controllers
             return Ok(articles);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
@@ -41,7 +43,7 @@ namespace Business.Articles.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateArticleRequest articleDto, CancellationToken cancellationToken)
         {
-            var article = await _mediator.Send(new CreateArticleCommand(articleDto.Title, articleDto.Content, articleDto.PublishedDate, articleDto.Active), cancellationToken);
+            var article = await _mediator.Send(new CreateArticleCommand(articleDto.Title, articleDto.Content, articleDto.PublishedDate), cancellationToken);
             return CreatedAtAction(nameof(Create), article, articleDto);
         }
 
@@ -59,6 +61,18 @@ namespace Business.Articles.Controllers
 
             var article = await _mediator.Send(command, cancellationToken);
             return Ok(article);
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromBody] DeleteArticleRequest request, CancellationToken cancellationToken)
+        {
+            var command = new DeleteArticleCommand
+            {
+                Id = request.Id
+            };
+            var res = await _mediator.Send(command, cancellationToken);
+            return Ok(res);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Infrastructure.Articles.Repositories
             var article = await GetByIdAsync(id, cancellationToken);
             if (article != null)
             {
-                article.Active = false;
+                _context.Remove(article);
             }
             await _context.SaveChangesAsync(cancellationToken);
         }
